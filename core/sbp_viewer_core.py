@@ -325,7 +325,7 @@ class SBPPickingDialog(QtWidgets.QDialog):
             self, "Remove Reflector",
             f"Remove '{name}'?\n(Field will be deleted in GPKG by viewer.)"
         )
-        if ret != QtWidgets.QMessageBox.Yes:
+        if ret != QtWidgets.QMessageBox.StandardButton.Yes:
             return
 
         self.reflectors.pop(name, None)
@@ -608,7 +608,7 @@ class SBPMarkersDialog(QtWidgets.QDialog):
         gl = QtWidgets.QVBoxLayout(grpL)
 
         self.lstLayers = QtWidgets.QListWidget()
-        self.lstLayers.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.lstLayers.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
         gl.addWidget(self.lstLayers)
 
         row = QtWidgets.QHBoxLayout()
@@ -725,26 +725,26 @@ class SBPMarkersDialog(QtWidgets.QDialog):
 
         for lyr in layers:
             it = QtWidgets.QListWidgetItem(lyr.name())
-            it.setFlags(it.flags() | QtCore.Qt.ItemIsUserCheckable)
-            state = QtCore.Qt.Checked if lyr.id() in checked_ids else QtCore.Qt.Unchecked
+            it.setFlags(it.flags() | QtCore.Qt.ItemFlag.ItemIsUserCheckable)
+            state = QtCore.Qt.CheckState.Checked if lyr.id() in checked_ids else QtCore.Qt.CheckState.Unchecked
             it.setCheckState(state)
-            it.setData(QtCore.Qt.UserRole, lyr.id())
+            it.setData(QtCore.Qt.ItemDataRole.UserRole, lyr.id())
             self.lstLayers.addItem(it)
 
     def _select_all(self):
         for i in range(self.lstLayers.count()):
-            self.lstLayers.item(i).setCheckState(QtCore.Qt.Checked)
+            self.lstLayers.item(i).setCheckState(QtCore.Qt.CheckState.Checked)
 
     def _clear_all(self):
         for i in range(self.lstLayers.count()):
-            self.lstLayers.item(i).setCheckState(QtCore.Qt.Unchecked)
+            self.lstLayers.item(i).setCheckState(QtCore.Qt.CheckState.Unchecked)
 
     def _selected_layers(self):
         out = []
         for i in range(self.lstLayers.count()):
             it = self.lstLayers.item(i)
-            if it.checkState() == QtCore.Qt.Checked:
-                lid = it.data(QtCore.Qt.UserRole)
+            if it.checkState() == QtCore.Qt.CheckState.Checked:
+                lid = it.data(QtCore.Qt.ItemDataRole.UserRole)
                 lyr = QgsProject.instance().mapLayer(lid)
                 if isinstance(lyr, QgsVectorLayer) and lyr.geometryType() == 0:
                     out.append(lyr)
@@ -989,7 +989,7 @@ class SBPViewerRaw(QtWidgets.QWidget):
 
 
         # IMPORTANT: actually destroy widget when closed
-        self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        self.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, True)
         self._is_closing = False
 
         # UI ------------------------------------------------
@@ -1131,8 +1131,8 @@ class SBPViewerRaw(QtWidgets.QWidget):
         iface.currentLayerChanged.connect(self.onCurrentLayerChanged)
 
         # focus for ESC
-        self.setFocusPolicy(QtCore.Qt.StrongFocus)
-        self.pgview.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self.setFocusPolicy(QtCore.Qt.FocusPolicy.StrongFocus)
+        self.pgview.setFocusPolicy(QtCore.Qt.FocusPolicy.StrongFocus)
         self.pgview.setFocus()
 
         if self.layer and isinstance(self.layer, QgsVectorLayer):
@@ -1622,7 +1622,7 @@ class SBPViewerRaw(QtWidgets.QWidget):
                     ys.append(np.nan)
 
             if traces:
-                r_pen = pg.mkPen(rgb_marker, width=2, style=QtCore.Qt.SolidLine)
+                r_pen = pg.mkPen(rgb_marker, width=2, style=QtCore.Qt.PenStyle.SolidLine)
                 it = pg.PlotDataItem(traces, ys, pen=r_pen, name=r_info["layer_name"], connect='finite')
                 it.setZValue(5002)
                 self.pgview.addItem(it)
@@ -1822,7 +1822,7 @@ class SBPViewerRaw(QtWidgets.QWidget):
 
 
     def onShiftToggle(self, state):
-        self.dt_shift_enabled = (state == QtCore.Qt.Checked)
+        self.dt_shift_enabled = (state == QtCore.Qt.CheckState.Checked)
         self._build_shifted_image()
         self.updatePlot()
         self._refresh_all_reflector_overlays()
@@ -1959,7 +1959,7 @@ class SBPViewerRaw(QtWidgets.QWidget):
 
 
     def onShowReflectorsMasterChanged(self, state):
-        self.show_reflectors_master = (state == QtCore.Qt.Checked)
+        self.show_reflectors_master = (state == QtCore.Qt.CheckState.Checked)
         self._refresh_all_reflector_overlays()
 
     def cleanup(self):
@@ -2196,7 +2196,7 @@ class SBPViewerRaw(QtWidgets.QWidget):
         self.statusLabel.setText("Pick cancelled (ESC).")
 
     def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Escape:
+        if event.key() == QtCore.Qt.Key.Key_Escape:
             self._cancel_active_pick()
             event.accept()
             return
@@ -2690,7 +2690,7 @@ class SBPViewerRaw(QtWidgets.QWidget):
         self.wiggleView.setXRange(minv, maxv, padding=0)
 
         if self.poly_preview is None:
-            self.poly_preview = pg.PlotDataItem([], [], pen=pg.mkPen('r', width=2, style=QtCore.Qt.DashLine))
+            self.poly_preview = pg.PlotDataItem([], [], pen=pg.mkPen('r', width=2, style=QtCore.Qt.PenStyle.DashLine))
             self.pgview.addItem(self.poly_preview)
 
         self._refresh_all_reflector_overlays()
@@ -2935,9 +2935,9 @@ class SBPViewerRaw(QtWidgets.QWidget):
 
         for lyr in layers:
             it = QtWidgets.QListWidgetItem(lyr.name())
-            it.setFlags(it.flags() | QtCore.Qt.ItemIsUserCheckable)
-            it.setCheckState(QtCore.Qt.Unchecked)
-            it.setData(QtCore.Qt.UserRole, lyr.id())
+            it.setFlags(it.flags() | QtCore.Qt.ItemFlag.ItemIsUserCheckable)
+            it.setCheckState(QtCore.Qt.CheckState.Unchecked)
+            it.setData(QtCore.Qt.ItemDataRole.UserRole, lyr.id())
             self.lstLayers.addItem(it)
 
 
@@ -3288,7 +3288,7 @@ class SBPViewerRaw(QtWidgets.QWidget):
         item = getattr(self, attr, None)
 
         if item is None:
-            item = pg.PlotDataItem([], [], pen=pg.mkPen('r', width=1, style=QtCore.Qt.DashLine))
+            item = pg.PlotDataItem([], [], pen=pg.mkPen('r', width=1, style=QtCore.Qt.PenStyle.DashLine))
             item.setBrush(pg.mkBrush(255, 0, 0, 60))  # RGBA (alpha=60)
             item.setFillLevel(0)  # baseline; we will override dynamically
             item.setZValue(999)
@@ -3474,7 +3474,7 @@ class SBPViewerRaw(QtWidgets.QWidget):
             b_view = self._raw_twt_to_view_y(int(b_i), float(b_raw))
 
             rgb = self._rgb_from_name((self.reflectors.get(self.pick_reflector, {}) or {}).get("color", "Red"))
-            self.poly_preview.setPen(pg.mkPen(rgb, width=2, style=QtCore.Qt.DashLine))
+            self.poly_preview.setPen(pg.mkPen(rgb, width=2, style=QtCore.Qt.PenStyle.DashLine))
             self.poly_preview.setData([a_i, b_i], [a_view, b_view])
         else:
             if self.poly_preview is not None:
@@ -3507,7 +3507,7 @@ class SBPViewerRaw(QtWidgets.QWidget):
     def onMouseClicked(self, event):
         if getattr(self, "_is_closing", False):
             return
-        if event.button() == QtCore.Qt.RightButton:
+        if event.button() == QtCore.Qt.MouseButton.RightButton:
             return
         if not self.pick_settings.get("enabled", False):
             return
@@ -3773,7 +3773,7 @@ class SBPViewerRaw(QtWidgets.QWidget):
 
     def eventFilter(self, obj, event):
         if obj == self.pgview.viewport():
-            if event.type() == QtCore.QEvent.Leave:
+            if int(event.type()) == 11:  # QtCore.QEvent.Type.Leave
                 self.hoverLine.hide()
                 if self.map_marker is not None:
                     self.map_marker.hide()

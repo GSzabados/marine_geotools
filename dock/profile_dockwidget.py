@@ -18,14 +18,14 @@ class MagProfileDock(QtWidgets.QDockWidget):
         self.setWidget(self._widget)
 
         self.setAllowedAreas(
-            QtCore.Qt.LeftDockWidgetArea |
-            QtCore.Qt.RightDockWidgetArea |
-            QtCore.Qt.BottomDockWidgetArea |
-            QtCore.Qt.TopDockWidgetArea
+            QtCore.Qt.DockWidgetArea.LeftDockWidgetArea |
+            QtCore.Qt.DockWidgetArea.RightDockWidgetArea |
+            QtCore.Qt.DockWidgetArea.BottomDockWidgetArea |
+            QtCore.Qt.DockWidgetArea.TopDockWidgetArea
         )
 
     def defaultDockArea(self):
-        return QtCore.Qt.BottomDockWidgetArea
+        return QtCore.Qt.DockWidgetArea.BottomDockWidgetArea
 
     def closeEvent(self, event):
         event.ignore()

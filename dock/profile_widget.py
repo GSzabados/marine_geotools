@@ -4,7 +4,10 @@ from qgis.PyQt import QtWidgets, QtCore
 from qgis.PyQt.QtCore import QVariant
 
 import pyqtgraph as pg
-import sip
+try:
+    from qgis.PyQt import sip
+except ImportError:
+    import sip
 from qgis.core import QgsProject, QgsMapLayer, QgsWkbTypes, QgsMessageLog, Qgis, QgsVectorLayer
 
 
@@ -85,7 +88,7 @@ class MagProfileWidget(QtWidgets.QWidget):
         self.value_edit.returnPressed.connect(self.apply_value_to_selected)
 
         # Plot Area
-        self.splitter = QtWidgets.QSplitter(QtCore.Qt.Vertical)
+        self.splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Vertical)
         self.plotWidgets, self.y_lists, self.vLines, self.regions = [], [], [], []
 
         for i in range(5):
@@ -95,7 +98,7 @@ class MagProfileWidget(QtWidgets.QWidget):
 
             # Field list
             y_list = QtWidgets.QListWidget()
-            y_list.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+            y_list.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
             y_list.setFixedWidth(220)
             y_list.setFixedHeight(110)
             y_list.itemSelectionChanged.connect(lambda i=i: self.field_selection_changed(i))
@@ -107,7 +110,7 @@ class MagProfileWidget(QtWidgets.QWidget):
             plot_column.setContentsMargins(0, 0, 0, 0)
 
             title = QtWidgets.QLabel(f"<b>Profile {i + 1}</b>")
-            title.setAlignment(QtCore.Qt.AlignLeft)
+            title.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft)
             plot_column.addWidget(title)
 
             plot = pg.PlotWidget()
@@ -130,7 +133,7 @@ class MagProfileWidget(QtWidgets.QWidget):
 
             # Vertical line + region
             vline = pg.InfiniteLine(angle=90, movable=False,
-                                    pen=pg.mkPen("r", width=1, style=QtCore.Qt.DashLine))
+                                    pen=pg.mkPen("r", width=1, style=QtCore.Qt.PenStyle.DashLine))
             region = pg.LinearRegionItem()
             region.setBrush(pg.mkBrush(255, 0, 0, 50))
             region.setZValue(10)
@@ -207,14 +210,14 @@ class MagProfileWidget(QtWidgets.QWidget):
 
     # Field logic
     def toggle_freeze_layer(self, state):
-        self.freeze_layer = (state == QtCore.Qt.Checked)
+        self.freeze_layer = (state == QtCore.Qt.CheckState.Checked)
         if not self.freeze_layer:
             current = self._iface.activeLayer()
             if current != self.layer:
                 self.layer_changed(current)
 
     def toggle_point_mode(self, state):
-        self.plot_point_mode = (state == QtCore.Qt.Checked)
+        self.plot_point_mode = (state == QtCore.Qt.CheckState.Checked)
 
     def toggle_multiple_axis(self, plot_index, enabled):
         self.multi_axis_enabled[plot_index] = enabled
@@ -426,8 +429,8 @@ class MagProfileWidget(QtWidgets.QWidget):
         nearest_x = closest["x"]
         self.last_clicked_fid = closest["fid"]
 
-        if event.button() == QtCore.Qt.LeftButton:
-            if event.modifiers() & QtCore.Qt.ShiftModifier:
+        if event.button() == QtCore.Qt.MouseButton.LeftButton:
+            if event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier:
                 self.selection_end_x = nearest_x
                 if self.selection_start_x is not None:
                     lo, hi = sorted([self.selection_start_x, self.selection_end_x])
@@ -484,10 +487,10 @@ class MagProfileWidget(QtWidgets.QWidget):
         self.value_edit.clear()
 
     def eventFilter(self, obj, event):
-        if event.type() == QtCore.QEvent.KeyPress:
+        if int(event.type()) == 6:  # QtCore.QEvent.Type.KeyPress
             key = event.key()
 
-            if key == QtCore.Qt.Key_Space:
+            if key == QtCore.Qt.Key.Key_Space:
                 if not self.mask_field or not self.layer:
                     return False
                 text_val = self.value_edit.text().strip()
@@ -518,18 +521,18 @@ class MagProfileWidget(QtWidgets.QWidget):
                 return True
 
             # Ctrl+J = zoom to selected
-            if (key == QtCore.Qt.Key_J and (event.modifiers() & QtCore.Qt.ControlModifier)):
+            if (key == QtCore.Qt.Key.Key_J and (event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier)):
                 if self.layer and self.layer.selectedFeatureIds():
                     self._iface.mapCanvas().zoomToSelected(self.layer)
                 return True
 
             # F5 = refresh
-            if key == QtCore.Qt.Key_F5:
+            if key == QtCore.Qt.Key.Key_F5:
                 self.refresh_plot_all()
                 return True
 
             # Digits = focus value_edit
-            if QtCore.Qt.Key_0 <= key <= QtCore.Qt.Key_9:
+            if QtCore.Qt.Key.Key_0 <= key <= QtCore.Qt.Key.Key_9:
                 if not self.value_edit.hasFocus():
                     self.value_edit.setFocus()
                     self.value_edit.clear()

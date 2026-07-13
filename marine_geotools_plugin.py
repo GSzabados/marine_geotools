@@ -72,8 +72,8 @@ class MarineGeoToolsPlugin:
         sbp_icon = QIcon(sbp_icon_path)
         
         self._sbp_tool_button = QToolButton()
-        self._sbp_tool_button.setToolButtonStyle(Qt.ToolButtonIconOnly)
-        self._sbp_tool_button.setPopupMode(QToolButton.MenuButtonPopup)
+        self._sbp_tool_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
+        self._sbp_tool_button.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         self._sbp_tool_button.setIcon(sbp_icon)
         self._sbp_tool_button.setToolTip("SBP Tools")
         self._sbp_tool_button.setMenu(self._sbp_root_menu)
@@ -178,7 +178,7 @@ class MarineGeoToolsPlugin:
     def _open_sbp_viewer(self):
         if self._sbp_dock is None:
             self._sbp_dock = SBPViewerDockWidget(self.iface, self.iface.mainWindow())
-            self.iface.addDockWidget(Qt.RightDockWidgetArea, self._sbp_dock)
+            self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self._sbp_dock)
         self._sbp_dock.show()
         self._sbp_dock.raise_()
         if self._sbp_viewer_action is not None:
