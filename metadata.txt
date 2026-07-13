@@ -1,6 +1,7 @@
 [general]
 name=Marine GeoTools
 qgisMinimumVersion=3.28
+qgisMaximumVersion=4.99
 description=Unified analogue marine geophysics processing plugin (MAG and SBP)
 version=0.1.0
 author=Rizky Affianto

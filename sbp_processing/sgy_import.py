@@ -38,7 +38,7 @@ from qgis.core import (
     QgsPointXY,
     QgsProject,
 )
-from PyQt5.QtCore import QVariant, QDateTime
+from qgis.PyQt.QtCore import QVariant, QDateTime
 
 
 class SGYBulkImportObsPy(QgsProcessingAlgorithm):

@@ -8,9 +8,9 @@
 #
 # Paste into QGIS Python Console and run.
 
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtGui import QColor
-from PyQt5.QtCore import QVariant
+from qgis.PyQt import QtWidgets, QtCore, QtGui
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtCore import QVariant
 import pyqtgraph as pg
 import numpy as np
 import os, json
