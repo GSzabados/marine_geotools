@@ -3016,7 +3016,7 @@ class SBPViewerRaw(QtWidgets.QWidget):
 
         dlg.applied.connect(_reload_after_gain)
 
-        dlg.exec_()
+        dlg.exec()
 
     def openColorDialog(self):
         """Open (or bring to front) the non-modal Color Scale dialog."""
